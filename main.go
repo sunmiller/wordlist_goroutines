@@ -29,9 +29,7 @@ type filePart struct {
 var maxGoroutines int
 
 func main() {
-	var (
-		goroutines = flag.Int("goroutines", 0, "num goroutines for parallel solutions (default NumCPU)")
-	)
+	goroutines := flag.Int("goroutines", 0, "num goroutines for parallel solutions (default NumCPU)")
 	output := bufio.NewWriter(os.Stdout)
 	maxGoroutines = *goroutines
 	if maxGoroutines == 0 {
@@ -71,7 +69,7 @@ func main() {
 		}
 	}
 
-	//sort the map alphabetically by key
+	// sort the map alphabetically by key
 	sortedKeys := make([]string, 0, len(finalResults))
 	for k := range finalResults {
 		sortedKeys = append(sortedKeys, k)
@@ -139,7 +137,6 @@ func main() {
 // }
 
 func processPartOfTheFile(filePath string, lineOffset int64, lineSize int64, resultsCh chan map[string]wordStats) {
-
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -175,45 +172,45 @@ func processPartOfTheFile(filePath string, lineOffset int64, lineSize int64, res
 	resultsCh <- results
 }
 
-func readthefile(filePath string, maxGoroutines int) ([]filePart, error) {
+// func readthefile(filePath string, maxGoroutines int) ([]filePart, error) {
 
-	fmt.Println("Reading file:", filePath)
-	// Add your file reading logic here
-	// You can use the "os" and "bufio" packages to read the file
-	// For example, you can use os.Open() to open the file and read its contents
-	// You can also use bufio.Scanner to read the file line by line
-	file, err := os.Open(filePath)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return nil, err
-	}
-	defer file.Close()
+// 	fmt.Println("Reading file:", filePath)
+// 	// Add your file reading logic here
+// 	// You can use the "os" and "bufio" packages to read the file
+// 	// For example, you can use os.Open() to open the file and read its contents
+// 	// You can also use bufio.Scanner to read the file line by line
+// 	file, err := os.Open(filePath)
+// 	if err != nil {
+// 		fmt.Println("Error opening file:", err)
+// 		return nil, err
+// 	}
+// 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	linesCount := 0
-	for scanner.Scan() {
-		linesCount++
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	fmt.Println("Total number of lines in the file:", linesCount)
-	//get the number of equal parts in the file
-	equalParts := (linesCount + maxGoroutines - 1) / maxGoroutines // Ceiling division in one step
+// 	scanner := bufio.NewScanner(file)
+// 	linesCount := 0
+// 	for scanner.Scan() {
+// 		linesCount++
+// 	}
+// 	if err := scanner.Err(); err != nil {
+// 		return nil, err
+// 	}
+// 	fmt.Println("Total number of lines in the file:", linesCount)
+// 	//get the number of equal parts in the file
+// 	equalParts := (linesCount + maxGoroutines - 1) / maxGoroutines // Ceiling division in one step
 
-	fileParts := make([]filePart, equalParts)
+// 	fileParts := make([]filePart, equalParts)
 
-	for i := range fileParts {
-		size := maxGoroutines
-		if i == equalParts-1 { // Last chunk takes the remainder if it exists
-			size = linesCount - i*maxGoroutines
-		}
-		fileParts[i] = filePart{offset: int64(i * maxGoroutines), size: int64(size)}
-	}
+// 	for i := range fileParts {
+// 		size := maxGoroutines
+// 		if i == equalParts-1 { // Last chunk takes the remainder if it exists
+// 			size = linesCount - i*maxGoroutines
+// 		}
+// 		fileParts[i] = filePart{offset: int64(i * maxGoroutines), size: int64(size)}
+// 	}
 
-	fmt.Println("Number of equal parts in the file:", equalParts)
-	return fileParts, nil
-}
+// 	fmt.Println("Number of equal parts in the file:", equalParts)
+// 	return fileParts, nil
+// }
 
 func splitFileGivenTheNumberOfParts(inputpath string, numParts int) ([]filePart, error) {
 	const maxLineLength = 100
@@ -225,7 +222,6 @@ func splitFileGivenTheNumberOfParts(inputpath string, numParts int) ([]filePart,
 	}
 
 	st, err := f.Stat()
-
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +231,7 @@ func splitFileGivenTheNumberOfParts(inputpath string, numParts int) ([]filePart,
 
 	fmt.Printf("Size of the file %d \n", size)
 	fmt.Printf("Split size %d \n", splitSize)
-	//buf is a small buffer (100 bytes) to help find line breaks.
+	// buf is a small buffer (100 bytes) to help find line breaks.
 	buf := make([]byte, maxLineLength)
 	// partsList is a list that will store all the split partsList.
 	partsList := make([]filePart, 0, numParts)
